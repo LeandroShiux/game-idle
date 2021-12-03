@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src='https://download.playfab.com/PlayFabClientApi.js'></script>
+  <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="lodash.js"></script>
+  <script type="text/javascript" src="break_infinity.min.js"></script>
+  <script type="text/javascript" src="lz-string.min.js"></script>
+  <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <title>Idle Sudoku Factory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <script>
+    function loginInUsingPlayFab() {
+      // Setting up playfab title ID
+      PlayFab.settings.titleId = "2BF8B";
+
+      // $('.itest').text('login playfab')
+
+      // forming request
+      var request = {
+        TitleId: PlayFab.settings.titleId,
+        AuthTicket: kongregate.services.getGameAuthToken(),
+        KongregateId: kongregate.services.getUserId(),
+        CreateAccount: true
+      };
+
+      PlayFabClientSDK.LoginWithKongregate(request,
+        function (result) {
+          // $('.itest').text('Authenticated via playfab')
+
+        },
+        function (err) {
+
+          // $('.itest').text('Problem occured: ' + PlayFab.GenerateErrorReport(err))
+        });
+    }
+
+
+    var isGuest;
+    kongregateAPI.loadAPI(function () {
+
+      window.kongregate = kongregateAPI.getAPI();
+      isGuest = kongregate.services.isGuest();
+      //let pname = isGuest ? "guest" : kongregate.services.getUsername()
+      // $('.itest').text('loadAPI')
+      loginInUsingPlayFab()
+      kongregate.services.addEventListener('login', function () {
+        isGuest = kongregate.services.isGuest();
+
+        // $('.itest').text('login na api')
+
+        if (!isGuest) {
+
+          // $('.itest').text('não é guest')
+          
+
+          
+
+        }
+      });
+    });
+
+    
+
+
+  </script>
+
+  <div class="ui segment red head">
+
+    <div class="mrow flar">
+      <span>Money: $<span class="imon">0</span></span>
+      <span>Money p/sec: $ <span class="imonps">0</span></span>
+      <span>Workers: <span class="iworkers"></span></span>
+      <!-- <span>Next\ Unlock: $ <span class="inun"></span></span> -->
+      <span>Glass Price: $<span class="iprice"></span> </span>
+      <!-- <span>Sales p/ sec: <span class="isalesps"></span> </span> -->
+      <span></span>
+    </div>
+    <div class="mrow flar">
+      <span>Sand: <span class="isand"></span> </span>
+      <!-- <span>Sand p/ sec: <span class="isandps"></span> </span> -->
+      <span>Sand Price: $<span class="isandprice"></span> </span>
+      <span>Current Bonus: <span class="ibonus"></span>x </span>
+      <span>Glass: <span class="iglass"></span> </span>
+      <!-- <span>Glass p/ sec: <span class="iglassps"></span> </span> -->
+      <span></span>
+    </div>
+
+  </div>
+  
+  <div class="nbody" style="height:calc(100% - 55px);display: flex;">
+    <div class="ui vertical menu small pmenu">
+      <a class="item" data-tab="help" onclick="showHelp()">
+        Rules/Help
+      </a>
+      <a class="item" data-tab="minisudo">
+        Anti-Clicker (Earn $)
+      </a>
+      <a class="item active" data-tab="fact">
+        Sudoku Factory
+      </a>
+      <a class="item" data-tab="upgrades">
+        Upgrades
+      </a>
+      <a class="item" data-tab="prestige">
+        Prestige
+      </a>
+      <a class="item" data-tab="research">
+        Research (Coming Soon)
+      </a>
+      <a class="item" data-tab="autosave">
+        <span class="imsg"></span>
+      </a>
+      <!-- <a class="item" data-tab="test">
+        <span class="itest"></span>
+      </a> -->
+
+      <div style="flex: 1 1 auto;">
+        <a style="padding: 1vw; text-decoration: none; color: azure;"></a>
+      </div>
+      <div style="color: #44444486; text-align: center">
+        Idle Sudoku Factory
+      </div>
+    </div>
+
+    <div class="ui tab" data-tab="prestige">
+
+      <div class="ui red segment pres flbt">
+
+        <div class="ui statistic">
+          <div class="value pp">
+            0
+          </div>
+          <div class="label">
+            Prestige Points <br>on Prestige
+          </div>
+        </div>
+
+        <!-- <div class="ui statistic">
+          <div class="bpp">
+            <h2> 1 / ((PP's * 3%) + 1) </h2>
+            <div class="ui divider"></div>
+          </div>
+          <div class="label">
+            Time Reduction per <br>Reset
+          </div>
+        </div> -->
+
+        <div class="ui statistic">
+          <div class="bpp">
+            <!-- <h2> Prestige Points Means </h2> -->
+            Prestige Points Means
+            <div class="ui divider"></div>
+          </div>
+          <div class="label">
+            Extra Bonus <br> Multiplier
+          </div>
+        </div>
+
+        <div class="ui statistic">
+          <div class="value cpp">
+            0
+          </div>
+          <div class="label">
+            Current <br>Prestige Points
+          </div>
+        </div>
+
+        <button class="ui button large red" onclick="prestige()">
+          RESET
+        </button>
+      </div>
+    </div>
+
+    <div class="ui tab active fact" data-tab="fact">
+
+      <div class="ui segment green subheader flar alcnt sudokey" id="mstop">
+
+        <span class="el">
+          Workers: <span class="workers">0</span>
+          <div class="ui icon buttons">
+            <div class="increment ui basic albt green button icon" onclick="tinc(this)"><i class="plus icon"></i>
+            </div>
+            <div class="decrement ui basic albt red button icon" onclick="tdec(this)"><i class="minus icon"></i>
+            </div>
+          </div>
+
+          <select name="mult" class="smult">
+            <option value="1" selected="selected">1x</option>
+            <option value="10">10x</option>
+            <option value="100">100x</option>
+          </select>
+        </span>
+
+
+        <span class="el">
+          Action:
+          <select name="action" class="saction" onchange="setAct(this)">
+            <option value="none" selected="selected">none</option>
+            <option value="sand">buyer</option>
+            <option value="glass">melting</option>
+            <option value="sales">seller</option>
+          </select>
+        </span>
+        <span class="el"><button class="ui albtt green button" onclick="buyRow()">Buy Row <br> $<span
+              class="irowprice"></span></button></span>
+        <span class="el"><button class="ui albtt green button" onclick="buyCol()">Buy Col <br> $<span
+              class="icolprice"></span></button></span>
+        <span class="el"><button class="ui albtt green button" onclick="hireWorker()">Hire Worker <br> $<span
+              class="ihireprice"></span></button></span>
+        <span class="el"><button class="ui albtt green button" onclick="clearFact()">Clear Grid</button></span>
+        <span class="el"></span>
+      </div>
+
+      <div class="ui blue segment gbbase">
+        <!-- Board -->
+        <div id="game-board">
+
+        </div>
+
+      </div>
+
+
+      
+
+    </div>
+
+    <div class="ui tab tupgrades fact" data-tab="upgrades">
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Glass Base Price from $<span class="gbprice"></span> to $<span class="gbup"></span></h4>
+        <button class="ui button green albt" onclick="upgradeGlass()">Upgrade <br> $<span
+            class="gbuprice"></span></button>
+      </div>
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Sand Capacity from <span class="iscap"></span> to <span class="iscapnext"></span></h4>
+        <button class="ui button green albt" onclick="upgradeSandCap()">Upgrade <br> $<span
+            class="iscapprice"></span></button>
+      </div>
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Glass Capacity from <span class="igcap"></span> to <span class="igcapnext"></span></h4>
+        <button class="ui button green albt" onclick="upgradeGlassCap()">Upgrade <br> $<span
+            class="igcapprice"></span></button>
+      </div>
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Sand Buyers rate from <span class="brate"></span>x to <span class="bratenext"></span>x</h4>
+        <button class="ui button green albt" onclick="upgradeBuyers()">Upgrade <br> $<span
+            class="brateprice"></span></button>
+      </div>
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Glass Melting rate from <span class="mrate"></span>x to <span class="mratenext"></span>x</h4>
+        <button class="ui button green albt" onclick="upgradeMelters()">Upgrade <br> $<span
+            class="mrateprice"></span></button>
+      </div>
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Increase Sellers rate from <span class="srate"></span>x to <span class="sratenext"></span>x</h4>
+        <button class="ui button green albt" onclick="upgradeSellers()">Upgrade <br> $<span
+            class="srateprice"></span></button>
+      </div>
+
+      <div class="ui segment green subheader flar alcnt upseg">
+        <h4>Sudoku 3x3 earnings per win increase per second <br> Current: <span class="epsec"></span> p/sec - Next:
+          <span class="epsecnext"></span> p/sec</h4>
+        <button class="ui button green albt" onclick="upgradeEpsec()">Upgrade <br> $<span
+            class="epsecprice"></span></button>
+      </div>
+
+
+    </div>
+
+    <div class="ui tab minisudo" data-tab="minisudo">
+
+      <div class="ui top attached tabular menu tmenu">
+        <a class="item active" data-tab="mss">3x3</a>
+        <a class="item" data-tab="msd">6x6</a>
+        <a class="item" data-tab="msf">9x9</a>
+      </div>
+
+      <div class="ui bottom attached tab gtab segment active mss sudokey" id="mss" data-tab="mss">
+
+        <div class="ui segment green subheader flar alcnt">
+
+          <span class="el">
+
+            <div class="ui icon buttons">
+              <div class="increment ui basic albt green button icon" onclick="msinc('s')"><i class="plus icon"></i>
+              </div>
+              <div class="decrement ui basic albt red button icon" onclick="msdec('s')"><i class="minus icon"></i>
+              </div>
+            </div>
+
+            <select name="mult" class="smult">
+              <option value="1" selected="selected">1x</option>
+              <option value="2">2x</option>
+              <option value="3">3x</option>
+            </select>
+            Selected: <span class="numb">0</span>
+          </span>
+
+
+
+          <!-- <span class="el"><button class="ui albtt green button" onclick="buyRow()">Buy Row <br> $<span class="irowprice"></span></button></span>
+            <span class="el"><button class="ui albtt green button" onclick="hireWorker()">Hire Worker <br> $<span class="ihireprice"></span></button></span> -->
+          <span class="el">
+            <h3>Earn $ <span class="earnings"></span> <br>per win</h3>
+          </span>
+          <span class="el"><button class="ui albtt green button" onclick="upgradeEarn()">10% increase<br> $<span
+                class="iearncost"></span></button></span>
+
+          <span class="el"><button class="ui albtt green button" onclick="clearGrid('s')">
+              <h3>Clear Grid</h3>
+            </button></span>
+          <span class="el error not">
+            <h2>WRONG!</h2>
+          </span>
+          <span class="el"></span>
+        </div>
+
+        <div class="ui blue segment gbbase">
+          <!-- Board -->
+          <div id="mss-board">
+          </div>
+        </div>
+
+
+        <div class="ui segment green subheader flar alcnt">
+          <span class="el">
+
+            <div class="ui icon buttons">
+              <div class="increment ui basic albt green button icon" onclick="winc()"><i class="plus icon"></i>
+              </div>
+              <div class="decrement ui basic albt red button icon" onclick="wdec()"><i class="minus icon"></i>
+              </div>
+            </div>
+
+            <select name="mult" class="epsmult">
+              <option value="1" selected="selected">1x</option>
+              <option value="10">10x</option>
+              <option value="100">100x</option>
+            </select>
+            Workers: <span class="epsworkers"></span> (Multiply Earnings)
+          </span>
+
+          <span class="el">
+            <h3>Earnings per win p/sec: <span class="mseps"></span></h3>
+          </span>
+          <span class="el"></span>
+          <span class="el"></span>
+          <span class="el"></span>
+        </div>
+      </div>
+
+      <div class="ui bottom attached tab gtab segment msd sudokey" id="msd" data-tab="msd">
+
+        <div class="ui segment green subheader flar alcnt">
+
+          <span class="el">
+
+            <div class="ui icon buttons">
+              <div class="increment ui basic albt green button icon" onclick="msinc('d')"><i class="plus icon"></i>
+              </div>
+              <div class="decrement ui basic albt red button icon" onclick="msdec('d')"><i class="minus icon"></i>
+              </div>
+            </div>
+
+            <select name="mult" class="smult">
+              <option value="1" selected="selected">1x</option>
+              <option value="2">2x</option>
+              <option value="3">3x</option>
+            </select>
+            Selected: <span class="numb">0</span>
+          </span>
+          <span class="el"></span>
+          <span class="el">
+            <h3>Travel <span class="itime"></span> minutes <br>on time per win</h3>
+          </span>
+
+          <span class="el"><button class="ui albtt green button" onclick="upgradeDtime()">Upgrade<br> $<span
+                class="itpcost"></span></button></span>
+
+          <span class="el"><button class="ui albtt green button" onclick="clearGrid('d')">
+              <h3>Clear Grid</h3>
+            </button></span>
+          <span class="el">Available: <span class="davailable"></span> <br>Time for refill: <span
+              class="dtimeleft"></span></span>
+          <span class="el error not">
+            <h2>WRONG!</h2>
+          </span>
+        </div>
+
+        <div class="ui blue segment gbbase">
+
+          <div id="msd-board">
+          </div>
+        </div>
+      </div>
+
+      <div class="ui bottom attached tab gtab segment msf sudokey" id="msf" data-tab="msf">
+
+        <div class="ui segment green subheader flar alcnt">
+
+          <span class="el">
+
+            <div class="ui icon buttons">
+              <div class="increment ui basic albt green button icon" onclick="msinc('f')"><i class="plus icon"></i>
+              </div>
+              <div class="decrement ui basic albt red button icon" onclick="msdec('f')"><i class="minus icon"></i>
+              </div>
+            </div>
+
+            <select name="mult" class="smult">
+              <option value="1" selected="selected">1x</option>
+              <option value="2">2x</option>
+              <option value="3">3x</option>
+            </select>
+            Selected: <span class="numb">0</span>
+          </span>
+          <span class="el"></span>
+          <span class="el">
+            <h4>Hire <span class="ippw"></span> workers without <br>increasing costs per win</h4>
+          </span>
+          <span class="el"><button class="ui albtt green button" onclick="upgradeNine()">Upgrade<br> $<span
+                class="ippcost"></span></button></span>
+          <span class="el"><button class="ui albtt green button" onclick="clearGrid('f')">
+              <h3>Clear Grid</h3>
+            </button></span>
+          <span class="el">Available: <span class="favailable"></span> <br>Time for refill: <span
+              class="ftimeleft"></span></span>
+          <span class="el error not">
+            <h2>WRONG!</h2>
+          </span>
+        </div>
+
+        <div class="ui blue segment gbbase">
+
+          <div id="msf-board">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui modal modfirst">
+      <i class="close icon"></i>
+      <div class="header">
+        Welcome to Idle Sudoku Factory (v1.1). Here are some rules:
+      </div>
+      <div class="image content" style="padding: 2px;">
+        <!-- <div class="ui small image" style="width: 120px;">
+          <img src="utclogo3.jpg">
+        </div> -->
+        <div class="description" style="padding: 8px;max-width: 100%;">
+          <div class="ui top attached tabular menu tmenu helpmenu">
+            <a class="item active" data-tab="h1">Factory</a>
+            <a class="item" data-tab="h2">3x3</a>
+            <a class="item" data-tab="h3">6x6</a>
+            <a class="item" data-tab="h4">9x9</a>
+          </div>
+
+          <div class="ui tab active" style="padding: 2px; margin: 2px;" data-tab="h1">
+
+            <ul>
+              <li>You have to assign your workers on each cell and an action for them by clicking in the cell and after
+                <span class="bold">typing</span> the value</li>
+              <li>You make money selling glass, to make glass you need to buy sand and melt it.</li>
+              <li>There's bonus <span class="bold">1.3 Multiplier</span> for every complete row or column <span
+                  class="bold">without repeating</span> numbers.</li>
+              <li>There's bonus <span class="bold">1.2 Multiplier</span> for every complete row or column <span
+                  class="bold">with the same</span> color/action.</li>
+              <li>The game tracks your offline progress.</li>
+              <li>The dashed blocks number can't be changed, only they action, they are extra workers.</li>
+              <li><span class="bold">Play the mini-games in the Anti-Clicker tab to earn money,workers and time travel
+                  !!!</span></li>
+            </ul>
+
+          </div>
+
+          <div class="ui tab" style="padding: 2px; margin: 2px;" data-tab="h2">
+
+            <ul>
+              <li>You earn money by completing without repeating in the same row or column like this:</li>
+              <div class="ui small image">
+
+                <img src="tuto1.jpg">
+
+              </div>
+              <li><span class="bold">Tip:</span> Start upgrading the earnings per win increase per second on the
+                upgrades tab.</li>
+
+            </ul>
+          </div>
+
+          <div class="ui tab" style="padding: 2px; margin: 2px;" data-tab="h3">
+
+            <ul>
+              <li>You can travel the time by completing without repeating in the same row or column and 2x3 box like
+                this:</li>
+              <div class="ui small image">
+
+                <img src="tuto2.jpg">
+
+              </div>
+
+            </ul>
+          </div>
+
+          <div class="ui tab" style="padding: 2px; margin: 2px;" data-tab="h4">
+
+            <ul>
+              <li>You can earn free workers by completing without repeating in the same row or column and 3x3 box like
+                this:</li>
+              <div class="ui small image">
+
+                <img src="tuto3.jpg">
+
+              </div>
+
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="ui modal wback">
+      <i class="close icon"></i>
+      <div class="header">
+        Welcome back!
+      </div>
+      <div class="image content">
+        <div class="ui small image">
+          <img src="utclogo3.jpg">
+        </div>
+        <div class="description">
+          <div class="ui header offearn">You earned $ 0 when offline.</div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+  <script src="index.js"></script>
+</body>
+
+</html>
